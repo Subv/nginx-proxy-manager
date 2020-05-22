@@ -209,6 +209,7 @@ module.exports = Mn.View.extend({
             this.ui.buttons.prop('disabled', true).addClass('btn-disabled');
             method(data)
                 .then(result => {
+                    result.openidc_allowed_users = JSON.stringify(result.openidc_allowed_users);
                     view.model.set(result);
 
                     App.UI.closeModal(function () {

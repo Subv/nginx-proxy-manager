@@ -227,6 +227,10 @@ const internalNginx = {
 			// Set the IPv6 setting for the host
 			host.ipv6 = internalNginx.ipv6Enabled();
 
+			if (host.openidc_restrict_users_enabled) {
+				host.openidc_allowed_users = JSON.parse(host.openidc_allowed_users);
+			}
+
 			locationsPromise.then(() => {
 				renderEngine
 					.parseAndRender(template, host)
