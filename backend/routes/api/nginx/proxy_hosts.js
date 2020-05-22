@@ -58,6 +58,7 @@ router
 	.post((req, res, next) => {
 		apiValidator({$ref: 'endpoints/proxy-hosts#/links/1/schema'}, req.body)
 			.then((payload) => {
+				payload.openidc_allowed_users = JSON.stringify(payload.openidc_allowed_users);
 				return internalProxyHost.create(res.locals.access, payload);
 			})
 			.then((result) => {
@@ -122,6 +123,7 @@ router
 		apiValidator({$ref: 'endpoints/proxy-hosts#/links/2/schema'}, req.body)
 			.then((payload) => {
 				payload.id = parseInt(req.params.host_id, 10);
+				payload.openidc_allowed_users = JSON.stringify(payload.openidc_allowed_users);
 				return internalProxyHost.update(res.locals.access, payload);
 			})
 			.then((result) => {
