@@ -34,7 +34,9 @@ module.exports = Mn.View.extend({
         hsts_subdomains:    'input[name="hsts_subdomains"]',
         http2_support:      'input[name="http2_support"]',
         forward_scheme:     'select[name="forward_scheme"]',
-        letsencrypt:        '.letsencrypt'
+        letsencrypt:        '.letsencrypt',
+        openidc_enabled:    'input[name="openidc_enabled"]',
+        openidc:            '.openidc'
     },
 
     regions: {
@@ -91,6 +93,17 @@ module.exports = Mn.View.extend({
             }
         },
 
+        'change @ui.openidc_enabled': function () {
+            console.log('Changing');
+            let checked = this.ui.openidc_enabled.prop('checked');
+
+            if (checked) {
+                this.ui.openidc.show().find('input').prop('required', true);
+            } else {
+                this.ui.openidc.hide().find('input').prop('required', false);
+            }
+        },
+
         'click @ui.add_location_btn': function (e) {
             e.preventDefault();
             
@@ -128,6 +141,7 @@ module.exports = Mn.View.extend({
             data.hsts_enabled            = !!data.hsts_enabled;
             data.hsts_subdomains         = !!data.hsts_subdomains;
             data.ssl_forced              = !!data.ssl_forced;
+            data.openidc_enabled         = data.openidc_enabled === '1';
 
             if (typeof data.domain_names === 'string' && data.domain_names) {
                 data.domain_names = data.domain_names.split(',');
@@ -266,6 +280,9 @@ module.exports = Mn.View.extend({
                 view.ui.certificate_select[0].selectize.setValue(view.model.get('certificate_id'));
             }
         });
+
+        // OpenID Connect
+        this.ui.openidc.hide().find('input').prop('required', false);
     },
 
     initialize: function (options) {
