@@ -31,16 +31,6 @@ EXPOSE 80
 EXPOSE 81
 EXPOSE 443
 
-COPY docker/rootfs      /
-ADD backend             /app
-ADD frontend/dist       /app/frontend
-
-WORKDIR /app
-RUN yarn install
-
-# Remove frontend service not required for prod, dev nginx config as well
-RUN rm -rf /etc/services.d/frontend RUN rm -f /etc/nginx/conf.d/dev.conf
-
 RUN mkdir -p /opt/luarocks-build && cd /opt/luarocks-build && apk add readline-dev perl pcre-dev openssl-dev zlib-dev
 RUN wget -O /opt/luarocks-build/luarocks-3.3.1.tar.gz http://luarocks.github.io/luarocks/releases/luarocks-3.3.1.tar.gz && wget -O /opt/luarocks-build/lua-5.1.5.tar.gz http://www.lua.org/ftp/lua-5.1.5.tar.gz
 RUN mkdir -p /opt/openresty-build && cd /opt/openresty-build && wget -O /opt/openresty-build/openresty-1.15.8.3.tar.gz https://openresty.org/download/openresty-1.15.8.3.tar.gz
@@ -86,6 +76,16 @@ RUN cd /opt/luarocks-build && tar -zxf lua-5.1.5.tar.gz && tar zxpf luarocks-3.3
 RUN cd /opt/luarocks-build/lua-5.1.5 && make linux test && make install
 RUN cd /opt/luarocks-build/luarocks-3.3.1 && ./configure && make && make install
 RUN apk add unzip && luarocks install lua-resty-openidc && luarocks install lua-cjson
+
+COPY docker/rootfs      /
+ADD backend             /app
+ADD frontend/dist       /app/frontend
+
+WORKDIR /app
+RUN yarn install
+
+# Remove frontend service not required for prod, dev nginx config as well
+RUN rm -rf /etc/services.d/frontend RUN rm -f /etc/nginx/conf.d/dev.conf
 
 VOLUME [ "/data", "/etc/letsencrypt" ]
 CMD [ "/init" ]
